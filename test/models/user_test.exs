@@ -19,8 +19,14 @@ defmodule Blog.UserTest do
     refute changeset.valid?
   end
 
-  test "password_digest gets set to a hash" do
+  test "password_digest value gets set to a hash" do
     changeset = User.changeset(%User{}, @valid_attrs)
-    assert get_change(changeset, :password_digest) == "ASDFQWER"
+    password_digest = Ecto.Changeset.get_change(changeset, :password_digest)
+    assert Comeonin.Bcrypt.checkpw(@valid_attrs.password, password_digest)
+  end
+
+  test "password_digest value does not get set if password is nil" do
+    changeset = User.changeset(%User{}, %{email: "test@test.com", password: nil, password_confirmation: nil, username: "test"})
+    refute Ecto.Changeset.get_change(changeset, :password_digest)
   end
 end
