@@ -18,13 +18,13 @@ defmodule Blog.SessionController do
       |> redirect(to: page_path(conn, :index))
     else
       conn
-      |> sign_out(user)
+      |> sign_out
       |> put_flash(:error, "Invalid username/password combination!")
       |> render("new.html", changeset: User.changeset(%User{username: username}))
     end
   end
 
-  defp sign_out(conn, user) do
+  defp sign_out(conn) do
     conn
     |> put_session(:current_user, nil)
   end
